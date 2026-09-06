@@ -343,8 +343,9 @@ Item {
     id: pasteProcess
     command: ["wl-paste", "-n"]
     stdout: StdioCollector { waitForEnd: true; onStreamFinished: pasteProcess.captured = text }
-    stderr: StdioCollector { waitForEnd: true }
+    stderr: StdioCollector { waitForEnd: true; onStreamFinished: pasteProcess.capturedErr = text }
     property string captured: ""
+    property string capturedErr: ""
     onExited: function(code) {
       var target = root.pasteTarget
       root.pasteTarget = ""
@@ -353,8 +354,13 @@ Item {
         if (target === "path") { root.createPath += line; root.createError = "" }
         else if (target === "value") { root.createValue += line; root.createError = "" }
         else if (target === "filter") root.setFilter(root.filterText + line)
+      } else {
+        var message = capturedErr.trim() || "Could not read the clipboard."
+        if (target === "path" || target === "value") root.createError = message
+        else root.notify(message)
       }
       captured = ""
+      capturedErr = ""
     }
   }
 
