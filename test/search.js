@@ -108,6 +108,38 @@ check("filterEntries is case-insensitive", function() {
   assert.deepStrictEqual(out, ["Work/Dev/DB/Root"])
 })
 
+check("firstLine takes only the text up to the first line break", function() {
+  assert.strictEqual(Search.firstLine("secret\nrest\nof\nfile"), "secret")
+  assert.strictEqual(Search.firstLine("secret\r\nrest"), "secret")
+  assert.strictEqual(Search.firstLine("nolinebreak"), "nolinebreak")
+  assert.strictEqual(Search.firstLine(""), "")
+  assert.strictEqual(Search.firstLine(undefined), "")
+})
+
+check("normalizePath trims slashes and whitespace", function() {
+  assert.strictEqual(Search.normalizePath("  /work/github/alice/  "), "work/github/alice")
+  assert.strictEqual(Search.normalizePath("work//github///alice"), "work/github/alice")
+  assert.strictEqual(Search.normalizePath(""), "")
+  assert.strictEqual(Search.normalizePath(undefined), "")
+})
+
+check("ensureTotpSuffix appends totp unless already the leaf", function() {
+  assert.strictEqual(Search.ensureTotpSuffix("work/github/alice"), "work/github/alice/totp")
+  assert.strictEqual(Search.ensureTotpSuffix("work/github/alice/totp"), "work/github/alice/totp")
+  assert.strictEqual(Search.ensureTotpSuffix("work/github/alice/TOTP"), "work/github/alice/TOTP")
+  assert.strictEqual(Search.ensureTotpSuffix(""), "totp")
+})
+
+check("buildOtpauthUri derives label/issuer from the account path", function() {
+  var uri = Search.buildOtpauthUri("work/github/alice", "jbsw y3dp ehpk 3pxp")
+  assert.strictEqual(uri, "otpauth://totp/github%3Aalice?secret=JBSWY3DPEHPK3PXP&issuer=github")
+})
+
+check("buildOtpauthUri omits issuer for a top-level account", function() {
+  var uri = Search.buildOtpauthUri("github", "JBSWY3DPEHPK3PXP")
+  assert.strictEqual(uri, "otpauth://totp/github?secret=JBSWY3DPEHPK3PXP")
+})
+
 if (failures > 0) {
   console.log(failures + " failure(s)")
   process.exit(1)

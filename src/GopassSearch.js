@@ -52,6 +52,31 @@ function isTotp(path) {
   return basename(path).toLowerCase() === "totp"
 }
 
+function firstLine(text) {
+  return String(text || "").split(/\r\n|\r|\n/)[0]
+}
+
+function normalizePath(raw) {
+  return String(raw || "").trim().replace(/^\/+|\/+$/g, "").replace(/\/{2,}/g, "/")
+}
+
+function ensureTotpSuffix(path) {
+  var clean = normalizePath(path)
+  if (!clean) return "totp"
+  return isTotp(clean) ? clean : clean + "/totp"
+}
+
+function buildOtpauthUri(accountPath, secret) {
+  var idx = String(accountPath || "").lastIndexOf("/")
+  var label = idx >= 0 ? accountPath.substring(idx + 1) : accountPath
+  var issuer = idx >= 0 ? accountPath.substring(0, idx).split("/").pop() : ""
+  var cleanSecret = String(secret || "").replace(/\s+/g, "").toUpperCase()
+  var otpLabel = issuer ? issuer + ":" + label : label
+  var params = "secret=" + encodeURIComponent(cleanSecret)
+  if (issuer) params += "&issuer=" + encodeURIComponent(issuer)
+  return "otpauth://totp/" + encodeURIComponent(otpLabel) + "?" + params
+}
+
 function splitEntries(paths) {
   var secrets = []
   var totps = []
@@ -152,6 +177,10 @@ if (typeof module !== "undefined") {
     childrenOf: childrenOf,
     parentDir: parentDir,
     isTotp: isTotp,
+    firstLine: firstLine,
+    normalizePath: normalizePath,
+    ensureTotpSuffix: ensureTotpSuffix,
+    buildOtpauthUri: buildOtpauthUri,
     splitEntries: splitEntries,
     totpAccounts: totpAccounts,
     fuzzyScore: fuzzyScore,

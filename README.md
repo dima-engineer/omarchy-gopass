@@ -41,7 +41,30 @@ the **TOTP** tab instead of **Secrets**.
 | `Tab` | Switch between Secrets and TOTP |
 | `Enter` on an entry | Copy the password (or current TOTP code) and close |
 | `Shift+Enter` | Type it into the window that was focused before, and close |
+| `Ctrl+N` | Create a new entry in the current tab (see below) |
 | `Esc` | Clear the filter, then go up a folder, then close |
+
+### Creating a secret or TOTP entry
+
+`Ctrl+N` starts a two-step form, prefilled from whatever you'd typed into the
+filter (or the folder you have open). Which kind of entry it creates depends
+on which tab you're on:
+
+- **Secrets tab**: type the path, `Enter`, then either type a password or
+  press `Ctrl+G` to have `gopass generate` create one for you. While on the
+  password field, `↑`/`↓` change the generated length (4-64 chars) and `Tab`
+  toggles symbols on/off — both shown live above the field — before you press
+  `Ctrl+G`.
+- **TOTP tab**: type the *account* path (e.g. `work/github/alice` — the
+  `/totp` leaf is added for you), `Enter`, then paste the secret key most
+  sites show you under the setup QR code (not the QR image itself). The
+  plugin builds the `otpauth://` URI from that key plus the path, the same
+  format an entry needs for the TOTP tab to work.
+
+`Ctrl+V` (or Omarchy's `SUPER+V`) pastes from the clipboard into whichever
+field you're on (path or value), and also works in the search filter. `Esc`
+steps back one field, then cancels. Creation refuses to overwrite a path
+that already exists.
 
 A copied password clears itself from the clipboard after 45 seconds — but
 only if the clipboard still holds exactly what was copied, so it never
@@ -56,7 +79,7 @@ dependency of `gopass` itself:
 | | |
 |---|---|
 | `gopass` | Reads and decrypts the store; this plugin never touches GPG directly |
-| `wl-clipboard` | `wl-copy`/`wl-paste`, for copying and for the delayed clipboard-clear check |
+| `wl-clipboard` | `wl-copy`/`wl-paste`, for copying, `Ctrl+V` pasting, and the delayed clipboard-clear check |
 | `wtype` | Typing a password/code into the previously focused window (optional — only needed for `Shift+Enter`) |
 | `libnotify` | `notify-send`, for the "copied" / error toasts |
 
@@ -84,8 +107,9 @@ process, with your user's permissions — true of any Omarchy plugin, and worth
 knowing for one that touches your password store.
 
 - **A secret is never on a command line.** Only the entry's *path* is (not
-  sensitive); the decrypted value crosses into `wl-copy`/`wtype` over stdin.
-  `/proc/<pid>/cmdline` is readable by every process running as you.
+  sensitive); the decrypted value crosses into `wl-copy`/`wtype` over stdin,
+  and a newly typed password/secret key crosses into `gopass insert` the same
+  way. `/proc/<pid>/cmdline` is readable by every process running as you.
 - **Nothing decrypted is cached.** A password/TOTP-code value exists only for
   the instant between `gopass` exiting and being handed to `wl-copy`/`wtype`.
   The TOTP tab caches the *rotating code* it already fetched, never the
