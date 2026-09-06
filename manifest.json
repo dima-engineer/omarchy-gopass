@@ -12,8 +12,8 @@
   ],
   "keepLoaded": true,
   "entryPoints": {
-    "overlay": "Gopass.qml",
-    "barWidget": "BarWidget.qml"
+    "overlay": "src/Gopass.qml",
+    "barWidget": "src/BarWidget.qml"
   },
   "barWidget": {
     "displayName": "Gopass",

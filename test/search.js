@@ -1,5 +1,5 @@
 var assert = require("assert")
-var Search = require("../GopassSearch.js")
+var Search = require("../src/GopassSearch.js")
 
 var failures = 0
 function check(name, fn) {
