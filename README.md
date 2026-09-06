@@ -13,10 +13,11 @@ omarchy plugin add https://github.com/dima-engineer/omarchy-gopass.git --enable
 `~/.config/omarchy/plugins/io.github.dima-engineer.gopass` and run
 `omarchy-shell shell rescanPlugins`.)
 
-Bind a key to open it, in `~/.config/hypr/bindings.conf`:
+Bind a key to open it, in `~/.config/hypr/bindings.conf` (Use instead of 1Password on the Passwords shortcut):
 
 ```
-bindd = SUPER, p, Gopass, exec, omarchy-shell shell toggle io.github.dima-engineer.gopass
+hl.unbind("SUPER + SHIFT + SLASH")
+o.bind("SUPER + SHIFT + SLASH", "Passwords (gopass)", "omarchy-shell shell toggle io.github.dima-engineer.gopass")
 ```
 
 ## Using it
