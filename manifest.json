@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.dima-engineer.gopass",
+  "name": "Gopass",
+  "version": "0.1.0",
+  "author": "dima-engineer",
+  "license": "MIT",
+  "description": "Fuzzy-search your gopass secrets from an Omarchy overlay, with TOTP codes broken out into their own section.",
+  "kinds": [
+    "overlay",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "Gopass.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Gopass",
+    "description": "Fuzzy-search your gopass secrets and TOTP codes",
+    "category": "Productivity",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
