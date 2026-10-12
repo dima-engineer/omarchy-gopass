@@ -12,6 +12,8 @@ Item {
   property var shell: null
   property var manifest: null
 
+  readonly property string logoPath: decodeURIComponent(Qt.resolvedUrl("../assets/logo.png").toString().replace(/^file:\/\//, ""))
+
   property bool opened: false
   property bool focusPrimed: false
   property string filterText: ""
@@ -494,7 +496,7 @@ Item {
   }
 
   function notify(body) {
-    Quickshell.execDetached(["notify-send", "-a", "Gopass", "-i", "gopass", "Gopass", body])
+    Quickshell.execDetached(["notify-send", "-a", "Gopass", "-i", root.logoPath, "Gopass", body])
   }
 
   function copySecret(path, kind) {
